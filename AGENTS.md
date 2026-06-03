@@ -27,8 +27,9 @@
 | `econative_start_session` | **Obligatorio** al inicio. Carga contexto, memorias, stack, preferences |
 | `econative_save_preferences` | Guarda nombre e idioma del usuario en Memoria/preferences-user/ |
 | `econative_stack_snapshot` | Escanea stack, escribe current.json y archiva snapshots viejos |
-| `econative_remember_it` | Guarda recuerdo compartido con fecha, tags e importancia |
-| `econative_remember_here` | Lee recuerdos compartidos con filtros |
+| `econative_remember_it` | Guarda descubrimiento en Memoria/discoveries/ con título, descripción, contenido, tags, importancia y estado |
+| `econative_remember_list` | Lista descubrimientos — solo metadata (título, descripción, tags, importancia, fecha, estado). Sin contenido |
+| `econative_remember_show` | Lee el contenido COMPLETO de un descubrimiento por nombre de archivo |
 | `econative_task_init` | Registra tarea en el log del sistema |
 | `econative_task_closeout` | Marca tarea como completada en el log |
 | `econative_domain_list` | Escanea .opencode/domains/ y devuelve lista de dominios con título y descripción |
@@ -39,8 +40,9 @@
 | Comando | Qué hace |
 |---|---|
 | `scan-stack` | Toma un snapshot del stack del proyecto |
-| `remember-it` | Guarda un recuerdo en la memoria compartida |
-| `remember-here` | Lee recuerdos guardados |
+| `remember-it` | Guarda un descubrimiento en la memoria compartida |
+| `remember-list` | Lista descubrimientos (solo metadata) |
+| `remember-show` | Lee contenido completo de un descubrimiento |
 
 ## Dominios disponibles
 
@@ -107,10 +109,24 @@ Engram está disponible para TODOS los agentes del ecosistema (North, Executor, 
 | `mem_suggest_topic_key(title, type)` | Obtener key estable para upserts |
 | `mem_doctor()` | Diagnóstico del estado de Engram |
 
-**Diferencia con tools econativas:**
-- `mem_save` / `mem_search` → persisten entre sesiones de OpenCode. Lo que guardás hoy aparece mañana.
-- `econative_remember_it` / `discoveries/` → persisten dentro del ecosistema `.opencode/Memoria/`. Son locales al proyecto.
-- Usá Engram para **hechos rápidos** ("decidimos X"). Usá discoveries para **conocimiento del proyecto** ("el puerto default es 8080").
+### Combinación Engram + tools econativas
+
+Engram y las tools econativas (`econative_remember_*`) son complementarias, no redundantes:
+
+| Situación | Engram (`mem_save`) | Econativa (`remember_it`) |
+|---|---|---|
+| **¿Quién lo gatilla?** | Automático (session_summary) y North cuando decide | North cuando decide |
+| **¿Dónde vive?** | SQLite en `~/.config/opencode/` (invisible) | Markdown en `.opencode/Memoria/discoveries/` (visible en el repo) |
+| **¿Quién lo ve?** | Solo los agentes | Cualquier developer que abra el repo |
+| **¿Para qué sirve?** | Memoria operativa entre sesiones: "qué estábamos haciendo", decisiones de arquitectura | Trazabilidad del proyecto: "esto es importante saber", descubrimientos, configuraciones no obvias |
+| **¿Persiste entre sesiones?** | ✅ Sí | ✅ Sí |
+| **¿Se trackea en git?** | ❌ No (está fuera del repo) | ✅ Sí (está dentro del proyecto) |
+| **Ejemplo de uso** | "Decidimos migrar de Express a Fastify" | "El puerto de desarrollo es 3001, no 3000 — lo cambiamos porque el 3000 está ocupado por el legacy" |
+
+**Regla práctica:**
+- Si es **conocimiento del proyecto** que un developer nuevo debería encontrar → `econative_remember_it`
+- Si es **contexto de sesión** que solo el agente necesita recordar mañana → `mem_save` (automático en session_summary)
+- Si estás en duda → `econative_remember_it`. El markdown se puede borrar si sobra. Engram es más difícil de limpiar.
 
 ## Notas
 

@@ -107,15 +107,19 @@ Una vez que sabés qué guardar, llamá al **plugin** para escribirlo.
 - Decidir qué persistir al cerrar tareas
 - Opcional: snapshot de stack si hay cambios grandes
 
-## Descubrimientos automáticos
+## Descubrimientos
 
-Cuando encontrás algo que vale la pena recordar:
+Cuando encontrás algo no obvio que vale la pena recordar:
 - Puerto que no es default
 - Dependencia con comportamiento raro
 - Workflow particular del repo
-- Cualquier cosa que si no anotás, la redescubrís
+- Configuración que si no anotás, la redescubrís
 
-Escribilo directo en `Memoria/discoveries/YYYY-MM-DD-nombre-corto.md`.
+Usá `econative_remember_it` con título, descripción (1 línea), contenido completo, tags, importancia y estado.
+
+Para explorar usá `econative_remember_list` (solo metadata, sin contenido). Cuando sepas cuál querés leer completo, usá `econative_remember_show`.
+
+**Criterio:** Si un developer nuevo debería encontrarlo → `remember_it`. Si es solo contexto de sesión (para mañana) → no lo guardes acá, es ruido.
 
 ## Decisiones (decision-records)
 
@@ -165,11 +169,11 @@ Antes de planificar, revisar arquitectura o decidir paralelismo, **cargá la ski
 | `econative_start_session` | **Siempre al inicio** |
 | `econative_save_preferences` | Post-onboarding o cambio de preferencias |
 | `econative_stack_snapshot` | Usuario pide scan-stack o cambios grandes |
-| `econative_remember_it` | Usuario dice "acordate/guardá esto" |
-| `econative_remember_here` | Usuario pregunta "qué recuerdos tengo" |
+| `econative_remember_it` | Encontraste algo no obvio que vale la pena guardar |
+| `econative_remember_list` | Explorar qué discoveries hay (solo metadata, liviano) |
+| `econative_remember_show` | Ya sabés cuál querés leer completo |
 | `econative_task_init` | Iniciás tarea grande o delegada |
 | `econative_task_closeout` | Tarea completada |
-| `mem_save` / `mem_search` | Memoria entre sesiones (Engram) — "acordate de esto para mañana" |
 | `sequential_thinking` | **Solo problemas complejos** (tradeoffs, caminos no obvios). NO para respuestas simples. |
 | `question()` | Onboarding y decisiones con opciones |
 | `task()` | **Delegar a Executor o Auditor** — tu herramienta principal |
