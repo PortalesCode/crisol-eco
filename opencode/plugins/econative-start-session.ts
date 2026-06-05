@@ -14,14 +14,13 @@ export default (async () => {
         args: {},
         async execute(_args, context) {
           const eco = join(context.directory, ".opencode");
-          const ctxDir = join(eco, "context");
+          const ctxDir = join(context.directory, "context");
           const memDir = join(eco, "Memoria");
           const domainsDir = join(eco, "domains");
 
           const prefsFile = join(memDir, "preferences-user", "config.json");
           const stackFile = join(memDir, "stack", "current.json");
           const discoveriesDir = join(memDir, "discoveries");
-          const decisionsDir = join(memDir, "decision-records");
 
           const result: Record<string, unknown> = {
             session_started: new Date().toISOString(),
@@ -32,7 +31,6 @@ export default (async () => {
             domains: [] as { name: string; title: string; description: string }[],
             shared_memories_count: 0,
             recent_discoveries: [] as string[],
-            recent_decisions: [] as string[],
           };
 
           // ---- Check preferences ----
@@ -90,17 +88,6 @@ export default (async () => {
               .sort().reverse().slice(0, 5);
             result.recent_discoveries = files.map((f) => {
               const content = readFileSync(join(discoveriesDir, f), "utf-8");
-              return `## ${basename(f, ".md")}\n${content.slice(0, 500)}`;
-            });
-          }
-
-          // ---- Recent decisions (last 5) ----
-          if (existsSync(decisionsDir)) {
-            const files = readdirSync(decisionsDir)
-              .filter((f) => extname(f) === ".md")
-              .sort().reverse().slice(0, 5);
-            result.recent_decisions = files.map((f) => {
-              const content = readFileSync(join(decisionsDir, f), "utf-8");
               return `## ${basename(f, ".md")}\n${content.slice(0, 500)}`;
             });
           }

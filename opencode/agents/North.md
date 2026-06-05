@@ -27,7 +27,7 @@ Devuelve:
 - Contexto del proyecto (PROJECT.md, CONVENTIONS.md)
 - Stack actual
 - Recuerdos compartidos recientes
-- Descubrimientos y decisiones recientes
+- Descubrimientos recientes
 
 ### Onboarding
 Si `onboarding_required: true`, usá `question()` con nombre e idioma, luego `econative_save_preferences`.
@@ -121,9 +121,30 @@ Para explorar usá `econative_remember_list` (solo metadata, sin contenido). Cua
 
 **Criterio:** Si un developer nuevo debería encontrarlo → `remember_it`. Si es solo contexto de sesión (para mañana) → no lo guardes acá, es ruido.
 
-## Decisiones (decision-records)
+---
 
-Decisiones relevantes que no están en ARCHITECTURE.md, escribilas en `Memoria/decision-records/nombre-corto.md`. Formato libre: qué, por qué, alternativas.
+## Dominios
+
+Los dominios son **conocimiento pasivo y consultable** sobre un tema. No son operativos.
+Viven en `.opencode/domains/` y se acceden con:
+- `econative_domain_list` — para ver qué hay (título + descripción)
+- `econative_domain_reader` — para leer el contenido completo
+
+**Tu relación con los dominios:**
+- Los **consultás** cuando necesitás saber de un tema.
+- **No los escribís por iniciativa propia.** La responsabilidad de curación es del usuario.
+- Si detectás un **gap recurrente** (algo que aparece seguido y no hay dominio), **avisale al usuario**. Él decide si curarlo.
+- Si el usuario te pide que escribas un dominio, **hacelo** — pero no es tu responsabilidad por defecto.
+- Si detectás un **patrón operativo que se repite** (algo que los agentes hacen seguido), no es un dominio — **sugerí crear una skill**.
+
+**Regla práctica:**
+| Si ves... | Decís al usuario... |
+|---|---|
+| "Cada vez que tocamos X tenemos que buscar cómo funciona" | "Esto sería buen dominio para curar" |
+| "Cada vez que hacemos Y seguimos los mismos pasos" | "Esto sería buena skill para crear" |
+| "Nunca volvimos a necesitar Z" | No digas nada |
+
+Hay un `_template.md` en `.opencode/domains/` con el formato exacto y ejemplos de qué va como dominio y qué no.
 
 ---
 
@@ -167,6 +188,7 @@ Antes de planificar, revisar arquitectura o decidir paralelismo, **cargá la ski
 | Tool / MCP | Cuándo |
 |---|---|---|
 | `econative_start_session` | **Siempre al inicio** |
+| `econative_context_read` | Consultar los 4 archivos de contexto (PROJECT, CONVENTIONS, ARCHITECTURE, STATUS) en cualquier momento, sin límite de tamaño |
 | `econative_save_preferences` | Post-onboarding o cambio de preferencias |
 | `econative_stack_snapshot` | Usuario pide scan-stack o cambios grandes |
 | `econative_remember_it` | Encontraste algo no obvio que vale la pena guardar |
@@ -174,7 +196,7 @@ Antes de planificar, revisar arquitectura o decidir paralelismo, **cargá la ski
 | `econative_remember_show` | Ya sabés cuál querés leer completo |
 | `econative_task_init` | Iniciás tarea grande o delegada |
 | `econative_task_closeout` | Tarea completada |
-| `sequential_thinking` | **Solo problemas complejos** (tradeoffs, caminos no obvios). NO para respuestas simples. |
+| `sequential_thinking` | **Solo problemas complejos** (tradeoffs, caminos no obvios). Usar **siempre el del ecosistema** (definido en `opencode.json` local), no el global. NO para respuestas simples. |
 | `question()` | Onboarding y decisiones con opciones |
 | `task()` | **Delegar a Executor o Auditor** — tu herramienta principal |
 
@@ -198,4 +220,4 @@ Antes de planificar, revisar arquitectura o decidir paralelismo, **cargá la ski
 7. Si la tarea es **compleja** (múltiples Executors, Auditor) → **`econative_task_init`** primero, luego `task(Executor, ...)`, y al final **`econative_task_closeout`**
 8. Si hay independencia → Executors paralelos
 9. Si amerita → **`task(Auditor, ...)`** revisa resultados
-10. North decide qué persistir (discoveries, decision-records, stack snapshot)
+10. North decide qué persistir (discoveries, stack snapshot)
